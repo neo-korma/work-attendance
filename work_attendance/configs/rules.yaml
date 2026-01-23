@@ -1,0 +1,34 @@
+hours:
+  A: 9
+  B: 9
+  C: 9
+  N: 10
+  A2: 11
+  OFF: 0
+  VAC: 0
+
+constraints:
+  weekly_hours_window: 7
+  max_weekly_hours: 52
+  forbid_B_then_A: true
+  min_off_after_N: 1
+  max_off_after_N: 2
+  forbid_A_after_N_rest: true
+  forbid_three_A_in_row: true
+  forbid_N_OFF_N: true
+  prefer_ideal_pattern: true
+  min_night_shifts_per_employee: 4
+  max_night_shifts_per_employee: 5
+  min_consecutive_work_days: 2
+  max_night_workers_per_day: 3
+  max_consecutive_off_days: 2
+  forbid_off_after_day_shift: true
+
+weights:
+  balance_shift_counts_per_employee: 10
+  balance_total_workers_per_day: 1
+  penalty_too_long_rest_after_N: 5
+  reward_ideal_pattern: 3
+
+calendar:
+  week_mode: "sliding"
