@@ -13,7 +13,8 @@ def load_yaml(path: str) -> dict:
 
 def load_employees_from_csv(path: str) -> List[Employee]:
     if not os.path.exists(path):
-        raise FileNotFoundError(f"직원 파일을 찾을 수 없습니다: {path}")
+        # 웹 배포 시 파일 누락으로 인한 크래시 방지
+        return []
     emps: List[Employee] = []
     # Excel에서 저장한 CSV 인코딩(BOM)을 고려하여 utf-8-sig 사용
     with open(path, newline="", encoding="utf-8-sig") as f:
@@ -23,12 +24,11 @@ def load_employees_from_csv(path: str) -> List[Employee]:
             if not name:
                 continue
             emps.append(Employee(name=name, team=r.get("team"), role=r.get("role")))
-    if not emps:
-        raise ValueError(f"{path}에 직원이 없습니다.")
     return emps
 
 def load_employees(path: str) -> List[Employee]:
-    return load_employees_from_csv(path)
+    emps = load_employees_from_csv(path)
+    return emps
 
 def load_demand(path: str) -> Optional[Dict[int, Dict[str, int]]]:
     if not os.path.exists(path):

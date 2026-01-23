@@ -11,10 +11,44 @@ from src.postprocess import build_formatted_workbook_bytes
 
 # Page Config
 st.set_page_config(page_title="교대근무 스케줄러", page_icon="🗓️", layout="wide")
+
+# --- 보안 접속 설정 ---
+def check_password():
+    """로그인 상태를 확인하고 비밀번호 입력창을 표시합니다."""
+    if "authenticated" not in st.session_state:
+        st.session_state.authenticated = False
+
+    if st.session_state.authenticated:
+        return True
+
+    # 센터 정렬을 위한 컨테이너
+    _, col, _ = st.columns([1, 2, 1])
+    with col:
+        st.write("## 🔒 보안 접속")
+        st.info("이 앱은 개인정보 보호를 위해 비밀번호가 필요합니다.")
+        input_password = st.text_input("비밀번호를 입력해 주세요.", type="password")
+        if st.button("로그인"):
+            # 기본 비밀번호 설정 (원하시는 대로 수정 가능)
+            if input_password == "6394": 
+                st.session_state.authenticated = True
+                st.rerun()
+            else:
+                st.error("⚠️ 비밀번호가 틀렸습니다.")
+    return False
+
+if not check_password():
+    st.stop()
+
 st.title("🗓️ 교대근무 스케줄러 (Excel 다운로드)")
 
 # 1. Load Base Data
 rules, default_employees_obj, default_demand, default_vacations = load_all()
+
+# Deployment Check: If default_employees_obj is empty, it means employees.csv was not found or is empty
+if not default_employees_obj:
+    st.error("⚠️ 직원 데이터(`configs/employees.csv`)를 불러올 수 없습니다.")
+    st.info("GitHub 저장소의 `configs` 폴더 안에 `employees.csv` 파일이 정상적으로 올라가 있는지 확인해주세요.")
+    st.stop()
 
 # Sidebar
 with st.sidebar:
