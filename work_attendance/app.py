@@ -153,6 +153,30 @@ with st.sidebar:
         help="여기 선택된 인원들끼리는 같은 날 동시에 N(야간) 근무에 들어가지 않습니다. (최대 1명만 배치)"
     )
 
+    # (NEW) 고급 설정 (제약 완화)
+    with st.expander("⚙️ 고급 제약 조건 설정 (제약 완화)"):
+        st.caption("스케줄 생성이 실패할 경우, 아래 제약을 해제하거나 범위를 넓혀보세요.")
+        
+        # constraints 업데이트용 변수들
+        c_3a = st.checkbox("3연속 A 근무 금지", value=rules.constraints.get("forbid_three_A_in_row", True))
+        c_ba = st.checkbox("B 다음날 A 근무 금지", value=rules.constraints.get("forbid_B_then_A", True))
+        c_off_after_day = st.checkbox("주간(A,B,C) 후 휴무 금지 (OFF는 N 뒤에만)", value=rules.constraints.get("forbid_off_after_day_shift", True))
+        
+        st.markdown("---")
+        st.write("#### 🌙 직원별 야간(N) 근무 횟수")
+        def_min_n = int(rules.constraints.get("min_night_shifts_per_employee", 0))
+        def_max_n = int(rules.constraints.get("max_night_shifts_per_employee", 99))
+        
+        c_min_n = st.number_input("최소 야간 근무", min_value=0, max_value=31, value=def_min_n)
+        c_max_n = st.number_input("최대 야간 근무", min_value=0, max_value=31, value=def_max_n)
+
+    # 룰 업데이트
+    rules.constraints["forbid_three_A_in_row"] = c_3a
+    rules.constraints["forbid_B_then_A"] = c_ba
+    rules.constraints["forbid_off_after_day_shift"] = c_off_after_day
+    rules.constraints["min_night_shifts_per_employee"] = c_min_n
+    rules.constraints["max_night_shifts_per_employee"] = c_max_n
+
     run_btn = st.button("🚀 스케줄 생성")
 
 # ----- Main Content -----

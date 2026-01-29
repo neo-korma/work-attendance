@@ -100,13 +100,11 @@ def build_and_solve(
                 if d + k < horizon:
                     model.Add(x[(e, d, "N")] <= x[(e, d + k, "OFF")] + x[(e, d + k, "VAC")])
 
-    # N-휴무 직후 A 금지(보수적: d+2, d+3의 A 금지)
+    # N-휴무 직후 A 금지 (수정: d+2의 A만 금지, d+3(N->OFF->OFF->A)은 허용)
     if constraints.get("forbid_A_after_N_rest", True):
         for e in employees:
             for d in range(horizon - 2):
                 model.Add(x[(e, d, "N")] + x[(e, d + 2, "A")] <= 1)
-            for d in range(horizon - 3):
-                model.Add(x[(e, d, "N")] + x[(e, d + 3, "A")] <= 1)
 
     # A 3연속 금지
     if constraints.get("forbid_three_A_in_row", True):
